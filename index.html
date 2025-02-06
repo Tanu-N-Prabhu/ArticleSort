@@ -31,6 +31,12 @@
         ol {
             padding-left: 20px;
         }
+        li {
+            cursor: pointer;
+        }
+        li input {
+            width: 80%;
+        }
     </style>
 </head>
 <body>
@@ -81,15 +87,11 @@
             let categoryFound = false;
             for (const [category, keywords] of Object.entries(categories)) {
                 if (keywords.some(keyword => articleInput.toLowerCase().includes(keyword))) {
-                    let list = document.getElementById(category);
                     let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
                     storedArticles.push(articleInput);
                     localStorage.setItem(category, JSON.stringify(storedArticles));
 
-                    let listItem = document.createElement("li");
-                    listItem.textContent = articleInput;
-                    list.appendChild(listItem);
-
+                    updateArticleList(category);
                     categoryFound = true;
                     break;
                 }
@@ -102,17 +104,44 @@
             document.getElementById("articleInput").value = "";
         }
 
+        function updateArticleList(category) {
+            let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
+            let list = document.getElementById(category);
+            list.innerHTML = "";
+
+            storedArticles.forEach((article, index) => {
+                let listItem = document.createElement("li");
+                listItem.textContent = article;
+                listItem.addEventListener("click", () => editArticle(category, index, listItem));
+                list.appendChild(listItem);
+            });
+        }
+
+        function editArticle(category, index, listItem) {
+            let input = document.createElement("input");
+            input.type = "text";
+            input.value = listItem.textContent;
+            listItem.textContent = "";
+            listItem.appendChild(input);
+            input.focus();
+
+            input.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    let updatedText = input.value.trim();
+                    if (updatedText) {
+                        let storedArticles = JSON.parse(localStorage.getItem(category));
+                        storedArticles[index] = updatedText;
+                        localStorage.setItem(category, JSON.stringify(storedArticles));
+
+                        updateArticleList(category);
+                    }
+                }
+            });
+        }
+
         function loadStoredArticles() {
             for (const category of Object.keys(categories)) {
-                let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
-                let list = document.getElementById(category);
-                list.innerHTML = ""; // Clear before adding to prevent duplication
-
-                storedArticles.forEach((article, index) => {
-                    let listItem = document.createElement("li");
-                    listItem.textContent = article;
-                    list.appendChild(listItem);
-                });
+                updateArticleList(category);
             }
         }
 
