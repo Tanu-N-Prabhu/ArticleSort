@@ -4,43 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArticleSort</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">  <!-- External CSS file -->
 </head>
-<body>
+<body class="container py-4">
 
-    <h2>ArticleSort</h2>
+    <h2 class="text-center mb-4">ArticleSort</h2>
 
-    <!-- Input field to enter article name and buttons -->
-    <input type="text" id="articleInput" placeholder="Enter article name">
-    <button onclick="categorizeArticle()">Categorize</button>
-    <button onclick="downloadCSV()">Download CSV</button>
+    <div class="mb-3 d-flex flex-column flex-md-row gap-2 justify-content-center">
+        <input type="text" id="articleInput" class="form-control w-50" placeholder="Enter article name">
+        <button class="btn btn-primary" onclick="categorizeArticle()">Categorize</button>
+        <button class="btn btn-success" onclick="downloadCSV()">Download CSV</button>
+    </div>
 
-    <h3>Categorized Articles</h3>
+    <h3 class="text-center mt-4">Categorized Articles</h3>
 
-    <!-- Table to display categorized articles -->
-    <table id="articleTable">
-        <thead>
-            <tr>
-                <th>Marketing</th>
-                <th>Technology</th>
-                <th>Pets</th>
-                <th>Biography</th>
-                <th>Life Hacks</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><ol id="Marketing"></ol></td>
-                <td><ol id="Technology"></ol></td>
-                <td><ol id="Pets"></ol></td>
-                <td><ol id="Biography"></ol></td>
-                <td><ol id="Life Hacks"></ol></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Marketing</th>
+                    <th>Technology</th>
+                    <th>Pets</th>
+                    <th>Biography</th>
+                    <th>Life Hacks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><ol id="Marketing" class="list-unstyled"></ol></td>
+                    <td><ol id="Technology" class="list-unstyled"></ol></td>
+                    <td><ol id="Pets" class="list-unstyled"></ol></td>
+                    <td><ol id="Biography" class="list-unstyled"></ol></td>
+                    <td><ol id="Life Hacks" class="list-unstyled"></ol></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <!-- External JavaScript file -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-
 </body>
 </html>
