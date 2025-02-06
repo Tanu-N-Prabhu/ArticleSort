@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Categorizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Article Categorizer</h2>
+    <input type="text" id="articleInput" placeholder="Enter article name">
+    <button onclick="categorizeArticle()">Categorize</button>
+    <button onclick="downloadCSV()">Download CSV</button>
+
+    <h3>Categorized Articles</h3>
+    <table id="articleTable">
+        <thead>
+            <tr>
+                <th>Marketing</th>
+                <th>Technology</th>
+                <th>Pets</th>
+                <th>Biography</th>
+                <th>Life Hacks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="Marketing"></td>
+                <td id="Technology"></td>
+                <td id="Pets"></td>
+                <td id="Biography"></td>
+                <td id="Life Hacks"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const categories = {
+            "Marketing": ["business", "advertising", "sales", "brand", "customer", "strategy"],
+            "Technology": ["tech", "AI", "machine learning", "software", "coding", "programming"],
+            "Pets": ["dog", "cat", "pet", "animal", "fish", "bird"],
+            "Biography": ["life", "story", "history", "biography", "memoir"],
+            "Life Hacks": ["hack", "tips", "productivity", "life", "efficiency"]
+        };
+
+        function categorizeArticle() {
+            const articleInput = document.getElementById("articleInput").value.trim();
+            if (!articleInput) {
+                alert("Please enter an article name.");
+                return;
+            }
+
+            let categoryFound = false;
+            for (const [category, keywords] of Object.entries(categories)) {
+                if (keywords.some(keyword => articleInput.toLowerCase().includes(keyword))) {
+                    document.getElementById(category).innerHTML += `<p>${articleInput}</p>`;
+                    
+                    // Store in local storage
+                    let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
+                    storedArticles.push(articleInput);
+                    localStorage.setItem(category, JSON.stringify(storedArticles));
+
+                    categoryFound = true;
+                    break;
+                }
+            }
+
+            if (!categoryFound) {
+                alert("Could not categorize the article.");
+            }
+
+            document.getElementById("articleInput").value = "";
+        }
+
+        function loadStoredArticles() {
+            for (const category of Object.keys(categories)) {
+                let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
+                document.getElementById(category).innerHTML = storedArticles.map(article => `<p>${article}</p>`).join("");
+            }
+        }
+
+        function downloadCSV() {
+            let csvContent = "Marketing,Technology,Pets,Biography,Life Hacks\n";
+            let maxRows = Math.max(
+                JSON.parse(localStorage.getItem("Marketing") || "[]").length,
+                JSON.parse(localStorage.getItem("Technology") || "[]").length,
+                JSON.parse(localStorage.getItem("Pets") || "[]").length,
+                JSON.parse(localStorage.getItem("Biography") || "[]").length,
+                JSON.parse(localStorage.getItem("Life Hacks") || "[]").length
+            );
+
+            for (let i = 0; i < maxRows; i++) {
+                let row = [
+                    (JSON.parse(localStorage.getItem("Marketing") || "[]")[i] || ""),
+                    (JSON.parse(localStorage.getItem("Technology") || "[]")[i] || ""),
+                    (JSON.parse(localStorage.getItem("Pets") || "[]")[i] || ""),
+                    (JSON.parse(localStorage.getItem("Biography") || "[]")[i] || ""),
+                    (JSON.parse(localStorage.getItem("Life Hacks") || "[]")[i] || "")
+                ].join(",");
+                csvContent += row + "\n";
+            }
+
+            let blob = new Blob([csvContent], { type: "text/csv" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "articles.csv";
+            link.click();
+        }
+
+        // Load previous articles on page load
+        window.onload = loadStoredArticles;
+    </script>
+
+</body>
+</html>
