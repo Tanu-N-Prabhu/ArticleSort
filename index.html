@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article Categorizer</title>
+    <title>ArticleSort</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,16 +22,20 @@
         th, td {
             border: 1px solid black;
             padding: 10px;
-            text-align: center;
+            text-align: left;
+            vertical-align: top;
         }
         th {
             background-color: #f4f4f4;
+        }
+        ol {
+            padding-left: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h2>Article Categorizer</h2>
+    <h2>ArticleSort</h2>
     <input type="text" id="articleInput" placeholder="Enter article name">
     <button onclick="categorizeArticle()">Categorize</button>
     <button onclick="downloadCSV()">Download CSV</button>
@@ -49,11 +53,11 @@
         </thead>
         <tbody>
             <tr>
-                <td id="Marketing"></td>
-                <td id="Technology"></td>
-                <td id="Pets"></td>
-                <td id="Biography"></td>
-                <td id="Life Hacks"></td>
+                <td><ol id="Marketing"></ol></td>
+                <td><ol id="Technology"></ol></td>
+                <td><ol id="Pets"></ol></td>
+                <td><ol id="Biography"></ol></td>
+                <td><ol id="Life Hacks"></ol></td>
             </tr>
         </tbody>
     </table>
@@ -77,12 +81,14 @@
             let categoryFound = false;
             for (const [category, keywords] of Object.entries(categories)) {
                 if (keywords.some(keyword => articleInput.toLowerCase().includes(keyword))) {
-                    document.getElementById(category).innerHTML += `<p>${articleInput}</p>`;
-                    
-                    // Store in local storage
+                    let list = document.getElementById(category);
                     let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
                     storedArticles.push(articleInput);
                     localStorage.setItem(category, JSON.stringify(storedArticles));
+
+                    let listItem = document.createElement("li");
+                    listItem.textContent = articleInput;
+                    list.appendChild(listItem);
 
                     categoryFound = true;
                     break;
@@ -99,7 +105,14 @@
         function loadStoredArticles() {
             for (const category of Object.keys(categories)) {
                 let storedArticles = JSON.parse(localStorage.getItem(category)) || [];
-                document.getElementById(category).innerHTML = storedArticles.map(article => `<p>${article}</p>`).join("");
+                let list = document.getElementById(category);
+                list.innerHTML = ""; // Clear before adding to prevent duplication
+
+                storedArticles.forEach((article, index) => {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = article;
+                    list.appendChild(listItem);
+                });
             }
         }
 
@@ -131,7 +144,6 @@
             link.click();
         }
 
-        // Load previous articles on page load
         window.onload = loadStoredArticles;
     </script>
 
