@@ -57,7 +57,19 @@ function updateArticleList(category) {
     storedArticles.forEach((article, index) => {
         let listItem = document.createElement("li");
         listItem.textContent = article;
-        listItem.addEventListener("click", () => editArticle(category, index, listItem));
+
+        let editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.classList.add("btn", "btn-warning", "btn-sm", "ms-2");
+        editButton.onclick = () => editArticle(category, index, listItem);
+
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm", "ms-2");
+        deleteButton.onclick = () => deleteArticle(category, index);
+
+        listItem.appendChild(editButton);
+        listItem.appendChild(deleteButton);
         list.appendChild(listItem);
     });
 }
@@ -65,8 +77,8 @@ function updateArticleList(category) {
 function editArticle(category, index, listItem) {
     let input = document.createElement("input");
     input.type = "text";
-    input.value = listItem.textContent;
-    listItem.textContent = "";
+    input.value = listItem.firstChild.textContent;
+    listItem.innerHTML = "";
     listItem.appendChild(input);
     input.focus();
 
@@ -82,6 +94,16 @@ function editArticle(category, index, listItem) {
             }
         }
     });
+}
+
+function deleteArticle(category, index) {
+    if (confirm("Are you sure you want to delete this article?")) {
+        let storedArticles = JSON.parse(localStorage.getItem(category));
+        storedArticles.splice(index, 1);
+        localStorage.setItem(category, JSON.stringify(storedArticles));
+
+        updateArticleList(category);
+    }
 }
 
 function loadStoredArticles() {
@@ -140,3 +162,4 @@ function clearAllArticles() {
 }
 
 window.onload = loadStoredArticles;
+
